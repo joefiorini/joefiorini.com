@@ -63,9 +63,9 @@
   "license": "MIT",
   "main": "n/a",
   "scripts": {
-    "build": "gatsby build",
-    "develop": "gatsby develop",
-    "start": "serve public/",
-    "now-build": "npm run build"
+    "build": "yarn gatsby build",
+    "develop": "yarn gatsby develop",
+    "start": "yarn serve public/",
+    "now-build": "yarn build"
   }
 }
