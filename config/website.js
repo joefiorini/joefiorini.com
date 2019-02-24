@@ -17,12 +17,12 @@ module.exports = {
   googleAnalyticsID: '',
 
   // Manifest and Progress color
-  themeColor: '#5348FF',
-  backgroundColor: '#2b2e3c',
+  themeColor: '#0584c7',
+  backgroundColor: '#EEF4F2',
 
   // Social component
-  twitter: 'https://twitter.com/eggheadio/',
-  twitterHandle: '@eggheadio',
-  github: 'https://github.com/eggheadio/',
-  linkedin: '',
+  twitter: 'https://twitter.com/joegrammer2/',
+  twitterHandle: '@joegrammer2',
+  github: 'https://github.com/joefiorini/',
+  linkedin: 'https://linkedin.com/in/joefiorini',
 }
