@@ -9,7 +9,7 @@
   "regions": ["sfo1", "gru1", "bru1"],
   "builds": [
     {
-      "src": "package.json",
+      "src": "./build.sh",
       "use": "@now/static-build",
       "config": { "distDir": "public" }
     }
