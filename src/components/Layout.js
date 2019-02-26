@@ -123,6 +123,8 @@ export default ({
     description: frontmatterDescription,
   } = frontmatter
 
+  const isPost = 'title' in frontmatter
+
   const keywords = (frontmatterKeywords || siteKeywords).join(', ')
   const description = frontmatterDescription || siteDescription
 
@@ -161,6 +163,7 @@ export default ({
             <Footer
               author={site.siteMetadata.author.name}
               noSubscribeForm={noSubscribeForm}
+              isPost={isPost}
             />
           )}
         </div>
