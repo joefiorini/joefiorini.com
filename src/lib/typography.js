@@ -1,5 +1,6 @@
 import Typography from 'typography'
 import '../fonts/fonts.css'
+import '../fonts/dank-mono.css'
 
 export const fonts = {
   regular: 'Inter UI Regular',
@@ -36,6 +37,12 @@ const typography = new Typography({
       lineHeight: 1.25,
       marginTop: rhythm(1),
       marginBottom: rhythm(1 / 2),
+    },
+    pre: {
+      fontFamily: 'dm',
+    },
+    '.token.keyword': {
+      fontStyle: 'italic',
     },
   }),
 })
