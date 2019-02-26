@@ -9,27 +9,46 @@ banner: './banner.png'
 
 import {OutboundLink} from "gatsby-plugin-google-analytics"
 
-An anti pattern I've seen on many projects is having multiple boolean flags on your component's state that control different aspects of the same component. All too often these flags can contradict each other and lead to very subtle bugs that are difficult to catch until it's too late. In this post we'll look at one example of such an anti-pattern and how TypeScript's rich type system allows us to express our code in a way that makes it easier for our team members to understand and gives us confidence that our code won't break unexpectedly.
+An anti pattern I've seen on many React projects is having multiple boolean flags on your component's state that control different aspects of the same component. All too often these flags can contradict each other and lead to very subtle bugs that are difficult to catch until it's too late. Let's look at one example of such an anti-pattern and how TypeScript's rich type system allows us to express our code in a way that makes it easier for our team members to understand and gives us confidence that our code won't break unexpectedly.
 
-A common need on web apps is to display an alert on the page confirming an action was sucessful or showing an error message. The simplest way to start is to track this in state using a boolean flag. Let's consider an example of showing the user a success confirmation.
+### An Alert Component
+
+A common need on web apps is to display an alert on the page confirming an action was sucessful or showing an error message. The simplest way to start is to track this in state using a boolean flag. Let's consider an example of showing an alert following user actions that save data to a server.
 
 ```typescript
 // UsernameForm.tsx
+
 import React from 'react'
 
 function UsernameForm() {
   const [isShowing, setIsShowing] = useState(false)
+  const [isError, setIsError] = useState(false)
+  const [alertMessage, setAlertMessage] = useState('')
   const [username, setUsername] = useState('')
 
   async function saveUsername() {
-    await saveUsernameViaApiCall()
+    const response = await saveUsernameViaApiCall()
+
+    if (response.errorMessage) {
+      setAlertMessage(response.errorMessage)
+      setIsError(true)
+    }  else {
+      setAlertMessage('Your username has been updated.')
+    }
     setIsShowing(true)
+  } catch (e) {
+    setIsError(true)
+  }
   }
 
   return (
     <section>
       <h1>Change Your Username</h1>
-      {isShowing ? <Alert>Your username has been updated</Alert> : null}
+      {isShowing ?
+        <Alert status={isError ? 'error' : 'success'}>
+          {alertMessage}
+        </Alert>
+      : null}
       <form onSubmit={saveUsername}>
         <div>
           <label htmlFor="username">Username</label>
@@ -51,82 +70,9 @@ function UsernameForm() {
 
 <aside>Note that the filename above has the `.tsx` extension. This extension allows us to write React components with TypeScript. See the <OutboundLink href="https://www.typescriptlang.org/docs/handbook/react-&-webpack.html">React & Webpack section of the TypeScript Handbook</OutboundLink> for more information.</aside>
 
-In the example above we have a form allowing a user to change their username. Upon submission of the form we make an API call to update the username and once that's complete we set the `isShowing` state to `true`. Above the form we display an alert to inform the user that their username was updated successfully. Of course, it won't be long before someone finds a way to make this break. Maybe there's a validation in the API that usernames must be unique. The most typical way I've seen to handle this is to track the status of the alert with state.
+In the example above we have a form allowing a user to change their username. Upon submission of the form we make an API call to update the username and once that's complete we set the `isShowing` state to `true`. We're assuming here that our API returns errors with an `"errorMessage"` property, and if we get a value for `errorMessage` we use that as the message to display in the alert. Above the form we display an alert to inform the user that their username was updated successfully, or the error message if the save was not successful.
 
-```typescript
-const [isShowing, setIsShowing] = useState(false)
-const [isError, setIsError] = useState(false)
-
-async function saveUsername() {
-  try {
-    await saveUsernameViaApiCall()
-    setIsShowing(true)
-  } catch (e) {
-    setIsError(true)
-  }
-}
-```
-
-First we add a new state flag called `isError`. Then we set it to true when we catch an error from the API.
-
-```typescript
-{
-  isShowing ? (
-    <Alert status={isError ? 'error' : 'success'}>
-      {isError
-        ? 'That username is already in use. Please try something different.'
-        : 'Your username has been updated.'}
-    </Alert>
-  ) : null
-}
-```
-
-Next we use the new `isError` flag twice: once for passing a status to the error component so we can style it appropriately (maybe a red background & icon for error and a green background/icon for success) and for determining what message to show. It won't take long to figure out that this code will only work as long as uniqueness is the only error condition. We know that's not likely the case; what happens if the server is down or there is an unknown error server side? We should probably let the server tell us what the problem is rather than assuming. To do this, we will need to have a contract with how our API returns errors. Let's assume for the moment that in the event of an error our API returns a single string that represents the error that occurred.
-
-```json
-{
-  "errorMessage": "That username is already in use. Please try something different."
-}
-```
-
-The example above shows what the error would look like in the case of a non-unique username. We can now use the presence of an error message string to determine if there's an error.
-
-```typescript
-const [isShowing, setIsShowing] = useState(false)
-const [isError, setIsError] = useState(false)
-const [alertMessage, setAlertMessage] = useState('')
-
-async function saveUsername() {
-  try {
-    const response = await saveUsernameViaApiCall()
-
-    if (response.errorMessage) {
-      setAlertMessage(response.errorMessage)
-      setIsError(true)
-    } else if (response.statusCode >= 500) {
-      setAlertMessage(
-        'An unknown error occurred trying to update your username. Please try again later.',
-      )
-      setIsError(true)
-    } else {
-      setAlertMessage('Your username has been updated.')
-    }
-    setIsShowing(true)
-  } catch (e) {
-    setIsError(true)
-  }
-}
-```
-
-Now we are getting the response from our API call and checking for a couple error cases: first we have an `errorMessage` then we track it in our component's state, otherwise we set the message to our success message. Now when we display the alert we can use the alert message from state.
-
-```typescript
-isShowing ? (
-  <Alert status={isError ? 'error' : 'success'}>{alertMessage}</Alert>
-) : null
-```
-
-That simplifies the code for showing the alert quite nicely. We deploy this to production and our users are now able to change their username and know if it worked or not. Hurrah.
+### Dismissing the Alert
 
 Then the feedback starts coming in. Product learns that users want to be able to dismiss this alert. Of course, our product manager wants to see how many users actually click the "close" button to dismiss it, therefore we need to track the number of times it's clicked. There are a number of ways to accomplish this (which are outside the scope of this post) but after careful consideration our team decides that we should track dismissed as another state of the alert, that way we can use a background script in a worker to periodically communicate this property to our analytics tracking tool. So we add another value to be tracked in our state.
 
@@ -162,9 +108,11 @@ function UsernameForm() {
     <section>
       <h1>Change Your Username</h1>
       {isShowing && !isDismissed ? (
-        <Alert status={isError ? 'error' : 'success'} onClose={closeAlert}>
-          {alertMessage}
-        </Alert>
+        <Alert
+          status={isError ? 'error' : 'success'}
+          onClose={closeAlert}
+          message={alertMessage}
+        />
       ) : null}
       <form onSubmit={saveUsername}>
         <div>
@@ -186,6 +134,8 @@ function UsernameForm() {
 ```
 
 Here we've added a callback to our `Alert` component to notify us when the close button is clicked. Then we call a `closeAlert` function that sets both `isShowing` and `isDimsissed` to make the alert go away.
+
+### Defining Complexity
 
 This is a relatively simple example, but hopefully it's clear how it's already starting to grow in complexity. Every time we display an alert we have to remember to set 3 state values and when it's closed we have to set two of them. However, all of these values are tightly coupled: ie. anytime `isError` is `true`, `isShowing` is also `true`; `isShowing` and `isDimsissed` are mutually exclusive, they should never be true at the same time.
 
@@ -228,9 +178,8 @@ function UsernameForm() {
           onClose={() => {
             setAlertStatus('dismissed')
           }}
-        >
-          {alertMessage}
-        </Alert>
+          message={alertMessage}
+        />
       ) : null}
       <form onSubmit={saveUsername}>
         <div>
@@ -253,17 +202,15 @@ function UsernameForm() {
 
 By consolidating these flags we made it impossible for the alert to be in two different states at once. We've also cut the number of values needed to show an alert down by a third, making it much less likely that someone will forget to set all the necessary values before rendering with the alert.
 
-### The Cat is Still Dead
+#### We Still Have a Problem
 
 We may have eliminated the contradictory states from our code, but there's still a problem. Since we're using strings for our `alertStatus` it's very easy to set it to an invalid value; there's nothing stopping someone from calling `setAlertStatus("cat")` and causing the alert to display wrong. Thanks to the dynamic nature of JavaScript without implementing extra conditions around the `Alert` component, there is no absolute way to prevent this. You _could_ use React's `prop-types` library to emit a warning in the browser when it receives an invalid value for `status`. However, in my experience prop type warnings are often ignored; you can configure a [test suite to fail on invalid prop type warnings](https://www.npmjs.com/package/jest-prop-type-error), or make sure everyone has eslint integration in their editor and use the [React eslint plugin](https://github.com/yannickcr/eslint-plugin-react) to validate prop types where possible.
 
-### The TypeScript Solution
+### A Brief Foray into TypeScript
 
-If you want a more foolproof way to help your team members (and, very likely your future self) use your code correctly, TypeScript provides a couple features that when used together provide a great defense against invalid states.
+If you want a more foolproof way to help your team members (and, very likely your future self) use your code correctly, TypeScript provides a few features that when used together provide a great defense against invalid states. If you are already familiar with type aliases, string literal types and union types feel free to skip to the next section. Otherwise read on for an introduction to these concepts before continuing.
 
-#### A Brief Sidetrack into Type Aliases & String Literal Types
-
-##### Type Aliases
+#### Type Aliases
 
 > Type aliases create a new name for a type.
 > – <cite>[TypeScript Handbook: Advanced Types](https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-aliases)</cite>
@@ -274,7 +221,7 @@ For example, you might rename the `string` type to `ID` to show that a specific 
 type ID = string
 ```
 
-##### String Literal Types
+#### String Literal Types
 
 > String literal types allow you to specify the exact value a string must have.
 > – <cite>[TypeScript Handbook: Advanced Types](https://www.typescriptlang.org/docs/handbook/advanced-types.html#string-literal-types)</cite>
@@ -297,7 +244,7 @@ Using the link above you can see that assigning `message` with a literal value o
 
 You may be wondering at this point how these features will help us with our alert example. We have seen how to enforce a single string value using a type, but our example has four mutually exclusive values. What we need is a way to enforce one of a number of values. And that is where union types come in.
 
-##### Introducing Union Types
+#### Introducing Union Types
 
 > A union type describes a value that can be one of several types. We use the vertical bar (|) to separate each type, so `number | string | boolean` is the type of a value that can be a number, a string, or a boolean.
 > – <cite>[TypeScript Handbook: Advanced Types](https://www.typescriptlang.org/docs/handbook/advanced-types.html#union-types)</cite>
@@ -321,20 +268,20 @@ function padLeft(value: string, padding: string | number) {
 
 You can use any valid TypeScript types as parts of a union type: records, arrays, functions, strings, numbers, even string literal types – the very thing we need for our alert!
 
-#### Back to Our Example
+### Back to Our Example
 
 Getting back to our alert example, we now know that we can combine type aliases, string literal types & union types to ensure our component never gets in an invalid state.
 
 ```typescript
 // Alert.tsx
 
-export type AlertStatus = 'not_shown' | 'success' | 'error' | 'dismissed'
+_export type AlertStatus = 'not_shown' | 'success' | 'error' | 'dismissed'
 
 function Alert({ status, message }: { status: AlertStatus; message: string }) {
   return <div className={`alert alert--${status}`}>{message}</div>
 }
 
-export default Alert
+_export default Alert
 ```
 
 Here we create a basic `Alert` compnonent that takes a prop called `status` of type `AlertStatus`; it can have four possible values and by separating them with `|` we create a union type that can only ever be one of the four values. We use the status to determine a CSS class for the alert. We've also changed the interface slightly to make the TypeScript easier to undertand: it also takes a `message` prop of type `string` and displays it inside the `div`. Note that we're also exporting the `AlertStatus` type; this makes it usable elsewhere.
@@ -375,9 +322,8 @@ function UsernameForm() {
           onClose={() => {
             setAlertStatus('dismissed')
           }}
-        >
-          {alertMessage}
-        </Alert>
+          message={alertMessage}
+        />
       ) : null}
       <form onSubmit={saveUsername}>
         <div>
