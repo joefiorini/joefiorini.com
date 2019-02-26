@@ -12,6 +12,13 @@ export default {
   p: props => <Paragraph {...props} />,
   pre: preProps => {
     const props = preToCodeBlock(preProps)
+
+    // TODO: Remove once https://github.com/ChristopherBiscardi/gatsby-mdx/issues/300 gets fixed
+    props.codeString = props.codeString.replace(
+      /(\n+)_export(\s)/g,
+      '$1export$2',
+    )
+
     // if there's a codeString and some props, we passed the test
     if (props) {
       return <Code {...props} />
