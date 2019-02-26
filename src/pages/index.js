@@ -8,7 +8,7 @@ import Container from 'components/Container'
 import { rhythm } from '../lib/typography'
 import theme from '../../config/theme'
 
-const Hero = () => (
+const Hero = ({ image }) => (
   <section
     css={css`
       * {
@@ -30,12 +30,32 @@ const Hero = () => (
         css={css`
           position: relative;
           z-index: 5;
-          line-height: 1.5;
           margin: 0;
-          max-width: ${rhythm(15)};
+          display: flex;
         `}
       >
-        Your blog says the things you want to say.
+        <div
+          css={css`
+            line-height: 1.5;
+            max-width: ${rhythm(15)};
+          `}
+        >
+          A blog about taming complexity in React apps by Joe Fiorini
+        </div>
+        <div
+          css={css`
+            align-self: center;
+          `}
+        >
+          <img
+            src={image}
+            css={css`
+              max-width: 200px;
+              max-height: 200px;
+              border-radius: 50%;
+            `}
+          />
+        </div>
       </h1>
     </Container>
     <div
@@ -68,7 +88,7 @@ export default function Index({ data: { site, allMdx } }) {
       headerColor={theme.colors.white}
       headerBg={theme.brand.primary}
     >
-      <Hero />
+      <Hero image={site.siteMetadata.image} />
       <Container
         css={css`
           padding-bottom: 0;
@@ -118,6 +138,7 @@ export const pageQuery = graphql`
       ...site
       siteMetadata {
         title
+        image
       }
     }
     allMdx(
