@@ -68,7 +68,7 @@ function UsernameForm() {
 }
 ```
 
-<aside>Note that the filename above has the `.tsx` extension. This extension allows us to write React components with TypeScript. See the <OutboundLink href="https://www.typescriptlang.org/docs/handbook/react-&-webpack.html">React & Webpack section of the TypeScript Handbook</OutboundLink> for more information.</aside>
+<Aside>Note that the filename above has the `.tsx` extension. This extension allows us to write React components with TypeScript. See the <OutboundLink href="https://www.typescriptlang.org/docs/handbook/react-&-webpack.html">React & Webpack section of the TypeScript Handbook</OutboundLink> for more information.</Aside>
 
 In the example above we have a form allowing a user to change their username. Upon submission of the form we make an API call to update the username and once that's complete we set the `isShowing` state to `true`. We're assuming here that our API returns errors with an `"errorMessage"` property, and if we get a value for `errorMessage` we use that as the message to display in the alert. Above the form we display an alert to inform the user that their username was updated successfully, or the error message if the save was not successful.
 

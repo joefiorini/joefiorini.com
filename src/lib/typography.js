@@ -38,6 +38,9 @@ const typography = new Typography({
       marginTop: rhythm(1),
       marginBottom: rhythm(1 / 2),
     },
+    aside: {
+      marginBottom: rhythm(1),
+    },
     pre: {
       fontFamily: 'dm',
     },
