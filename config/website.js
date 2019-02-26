@@ -1,20 +1,22 @@
 module.exports = {
   pathPrefix: '/', // Prefix for all links. If you deploy your site to example.com/blog your pathPrefix should be "blog"
-  siteTitle: 'My Blog', // Navigation and Site Title
-  siteTitleAlt: 'The blog of an egghead creator', // Alternative Site title for SEO
-  siteTitleShort: 'Starter Blog', // short_name for manifest
-  siteUrl: 'https://your-site.io', // Domain of your site. No trailing slash!
+  siteTitle: 'Joe Fiorini', // Navigation and Site Title
+  siteTitleAlt:
+    'Blog about taming complex React apps and complexity in apps built with React.js, TypeScript & using React Hooks', // Alternative Site title for SEO
+  siteTitleShort: 'Joe Fiorini', // short_name for manifest
+  siteUrl: 'https://joefiorini.com', // Domain of your site. No trailing slash!
   siteLanguage: 'en', // Language Tag on <html> element
   siteLogo: 'images/logo.png', // Used for SEO and manifest, path to your image you placed in the 'static' folder
-  siteDescription: 'This is where they post things!',
-  author: 'Author', // Author for schemaORGJSONLD
-  organization: 'egghead.io LLC',
+  siteDescription:
+    'Tame complexity in your React app; simple posts with detailed examples describing how complexity creeps into React projects and how to solve it.',
+  author: 'Joe Fiorini', // Author for schemaORGJSONLD
+  organization: '',
 
   // siteFBAppID: '123456789', // Facebook App ID - Optional
-  userTwitter: '@eggheadio', // Twitter Username
-  ogSiteName: 'egghead.io Gatsby Starter Blog', // Facebook Site Name
+  userTwitter: '@joegrammer2', // Twitter Username
+  ogSiteName: 'Joe Fiorini', // Facebook Site Name
   ogLanguage: 'en_US',
-  googleAnalyticsID: '',
+  googleAnalyticsID: 'UA-58406625-2',
 
   // Manifest and Progress color
   themeColor: '#0584c7',
