@@ -41,7 +41,7 @@ const typography = new Typography({
     aside: {
       marginBottom: rhythm(1),
     },
-    pre: {
+    'pre,code': {
       fontFamily: 'dm',
     },
     '.token.keyword': {
