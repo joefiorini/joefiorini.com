@@ -2,10 +2,11 @@ import React from 'react'
 import { css } from '@emotion/core'
 import { bpMaxSM } from '../lib/breakpoints'
 import SubscribeForm from './Forms/Subscribe'
+import HireMe from './HireMe'
 import { Twitter, GitHub, LinkedIn } from './Social'
 import Container from './Container'
 
-const Footer = ({ author, noSubscribeForm }) => (
+const Footer = ({ author, noSubscribeForm, isPost }) => (
   <footer>
     <Container
       css={css`
@@ -17,6 +18,7 @@ const Footer = ({ author, noSubscribeForm }) => (
     >
       {!noSubscribeForm && (
         <div>
+          {isPost && <HireMe />}
           <SubscribeForm />
           <br />
           <br />
