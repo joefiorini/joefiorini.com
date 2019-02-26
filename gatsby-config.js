@@ -45,6 +45,11 @@ module.exports = {
       resolve: `gatsby-mdx`,
       options: {
         extensions: ['.mdx', '.md', '.markdown'],
+        globalScope: `
+          import Aside from "components/mdx/Aside"
+
+          export default { Aside }
+        `,
         gatsbyRemarkPlugins: [
           {
             resolve: 'gatsby-remark-images',
