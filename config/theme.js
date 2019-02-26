@@ -9,7 +9,7 @@ const brand = {
   //primary: '#D96E0E',
   //primary: '#9B59B6',
   //primary: '#6420E5',
-  primary: '#0584c7',
+  primary: '#4297c3',
   secondary: '#EEF4F2',
 }
 
