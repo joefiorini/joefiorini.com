@@ -7,9 +7,11 @@ published: true
 banner: './banner.png'
 ---
 
-A common anti pattern I've seen on many projects is having multiple boolean flags on your component's state that control different aspects of the same component. Too vague you say? Let's look at an example.
+import {OutboundLink} from "gatsby-plugin-google-analytics"
 
-A common need on web apps is to display an alert on the page confirming an action was sucessful or showing an error message. It's pretty common to track this in state using a boolean flag. Let's consider an example of showing the user a success confirmation.
+An anti pattern I've seen on many projects is having multiple boolean flags on your component's state that control different aspects of the same component. All too often these flags can contradict each other and lead to very subtle bugs that are difficult to catch until it's too late. In this post we'll look at one example of such an anti-pattern and how TypeScript's rich type system allows us to express our code in a way that makes it easier for our team members to understand and gives us confidence that our code won't break unexpectedly.
+
+A common need on web apps is to display an alert on the page confirming an action was sucessful or showing an error message. The simplest way to start is to track this in state using a boolean flag. Let's consider an example of showing the user a success confirmation.
 
 ```typescript
 // UsernameForm.tsx
@@ -46,6 +48,8 @@ function UsernameForm() {
   )
 }
 ```
+
+<aside>Note that the filename above has the `.tsx` extension. This extension allows us to write React components with TypeScript. See the <OutboundLink href="https://www.typescriptlang.org/docs/handbook/react-&-webpack.html">React & Webpack section of the TypeScript Handbook</OutboundLink> for more information.</aside>
 
 In the example above we have a form allowing a user to change their username. Upon submission of the form we make an API call to update the username and once that's complete we set the `isShowing` state to `true`. Above the form we display an alert to inform the user that their username was updated successfully. Of course, it won't be long before someone finds a way to make this break. Maybe there's a validation in the API that usernames must be unique. The most typical way I've seen to handle this is to track the status of the alert with state.
 
