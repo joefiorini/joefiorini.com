@@ -1,24 +1,30 @@
-import React from 'react'
+import { css } from '@emotion/core'
+import Container from 'components/Container'
+import SEO from 'components/SEO'
 import { graphql } from 'gatsby'
 import Img from 'gatsby-image'
 import MDXRenderer from 'gatsby-mdx/mdx-renderer'
-import SEO from 'components/SEO'
-import { css } from '@emotion/core'
-import Container from 'components/Container'
-import Layout from '../components/Layout'
-import { fonts } from '../lib/typography'
-import Share from '../components/Share'
+import { OutboundLink } from 'gatsby-plugin-google-analytics'
+import React from 'react'
 import config from '../../config/website'
+import Layout from '../components/Layout'
+import Aside from '../components/mdx/Aside'
+import Share from '../components/Share'
+import { YouTube } from '../components/Social'
 import { bpMaxSM } from '../lib/breakpoints'
+import { fonts } from '../lib/typography'
 
 export default function Post({
   data: { site, mdx },
   pageContext: { next, prev },
 }) {
   // const author = mdx.frontmatter.author || config.author
+  console.log(mdx.frontmatter)
   const date = mdx.frontmatter.date
   const title = mdx.frontmatter.title
   const banner = mdx.frontmatter.banner
+  const videoUrl = mdx.frontmatter.video_url
+  const videoTeaser = mdx.frontmatter.video_teaser
 
   return (
     <Layout site={site} frontmatter={mdx.frontmatter}>
@@ -74,6 +80,35 @@ export default function Post({
             </div>
           )}
           <br />
+          {videoUrl ? (
+            <Aside>
+              <h3
+                css={css`
+                  display: flex;
+                  align-items: center;
+                `}
+              >
+                <div
+                  css={css`
+                    line-height: 0;
+                    display: inline-block;
+                    margin-right: 8px;
+                  `}
+                >
+                  <YouTube url={videoUrl} />
+                </div>{' '}
+                This post has a companion video
+              </h3>
+              {videoTeaser ? <p>{videoTeaser}</p> : null}
+              <p
+                css={css`
+                  margin-bottom: 0;
+                `}
+              >
+                <OutboundLink href={videoUrl}>Watch the video</OutboundLink>
+              </p>
+            </Aside>
+          ) : null}
           <MDXRenderer>{mdx.code.body}</MDXRenderer>
         </Container>
         {/* <SubscribeForm /> */}
@@ -98,6 +133,8 @@ export const pageQuery = graphql`
     mdx(fields: { id: { eq: $id } }) {
       frontmatter {
         title
+        video_url
+        video_teaser
         date(formatString: "MMMM DD, YYYY")
         banner {
           childImageSharp {

@@ -27,4 +27,5 @@ module.exports = {
   twitterHandle: '@joegrammer2',
   github: 'https://github.com/joefiorini/',
   linkedin: 'https://linkedin.com/in/joefiorini',
+  youtube: 'https://www.youtube.com/channel/UC8b1BsgHDWTb8W0HAJy9-Yw',
 }

@@ -1,10 +1,10 @@
-import React from 'react'
 import { css } from '@emotion/core'
+import React from 'react'
 import { bpMaxSM } from '../lib/breakpoints'
+import Container from './Container'
 import SubscribeForm from './Forms/Subscribe'
 import HireMe from './HireMe'
-import { Twitter, GitHub, LinkedIn } from './Social'
-import Container from './Container'
+import { GitHub, LinkedIn, Twitter, YouTube } from './Social'
 
 const Footer = ({ author, noSubscribeForm, isPost }) => (
   <footer>
@@ -43,6 +43,7 @@ const Footer = ({ author, noSubscribeForm, isPost }) => (
           <Twitter />
           <GitHub />
           <LinkedIn />
+          <YouTube />
         </div>
       </div>
     </Container>

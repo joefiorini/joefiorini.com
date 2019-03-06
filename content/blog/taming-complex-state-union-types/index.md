@@ -3,6 +3,8 @@ slug: taming-complex-state-union-types
 date: 2019-02-26
 title: 'Taming Complex React State with Union Types'
 description: "A common anti pattern I've seen on many projects is having multiple boolean flags on your component's state that control different aspects of the same component (eg. one to track if an alert is shown and another to track if it's dismissed). This post shows one possible way to tame this complexity using TypeScript's union types."
+video_url: https://youtu.be/QI-G3HoIqbE
+video_teaser: 'Watch me live code the Alert component example in this article and talk through my motivations as I refactor.'
 published: true
 ---
 
